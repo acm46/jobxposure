@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head><title>Tester</title></head>
+<body>
+
+<video id="basic-stream" autoplay="" controls=""></video>
+	<p>
+	<button id="capture-button">Capture video</button>
+	<button id="stop-button">Stop</button>
+	</p>
+
+<script type="text/javascript">
+	function userMediaFailure(e){
+		if(e.code==1)
+			{alert('User denied access to their camera');}
+		else
+			{alert('getUserMedia() not supported in your browser.');}
+	}
+	(function(){
+		var video=document.querySelector('#basic-stream');
+		var button=document.querySelector('#capture-button');
+		var stop=document.querySelector('#stop-button');
+		var localMediaStream=null;
+		
+		button.addEventListener('click',function(e){
+			if(navigator.getUserMedia){
+				navigator.getUserMedia('video',function(stream){
+						video.src=stream;
+						video.controls=true;
+						localMediaStream=stream;
+						video.play();
+					},userMediaFailure);
+				}
+			else if(navigator.webkitGetUserMedia){
+				navigator.webkitGetUserMedia({audio:true, video:true},function(stream){
+						video.src=window.webkitURL.createObjectURL(stream);
+						video.controls=true;
+						localMediaStream=stream;
+						video.play();
+					},userMediaFailure);
+				}
+			// else if(navigator.mozGetUserMedia){
+			// 	console.log("test");
+			// 	navigator.mozGetUserMedia({audio:true, video:true},function(stream){
+			// 			video.src=window.webkitURL.createObjectURL(stream);
+			// 			video.controls=true;
+			// 			localMediaStream=stream;
+			// 		},userMediaFailure);
+			// 	}
+			else{
+				userMediaFailure({target:video});
+				}
+			},false);
+		
+		stop.addEventListener('click',function(e){
+			video.pause();
+			localMediaStream.stop();},false);
+		})();
+</script>
+
+</body>
+</html>
+
